@@ -106,4 +106,72 @@ Este código debería compilar y funcionar en CLion sin necesidad de agregar la 
 
 Por último, ten en cuenta que este código no realiza una comprobación completa de errores y no es robusto contra varios tipos de errores de entrada. Dependiendo de tu caso de uso específico, es posible que desees agregar comprobaciones de errores adicionales y manejar los fallos de manera más sofisticada.
 
-# Correción Caso Final Integrador de Encina 
+# Correción Caso Final Integrador 3 de Encina 
+
+### Evaluación del código y justificación de la calificación
+
+
+  1. Implementación de load_script(const char* filename, bool show_script = false) :
+     - La función está correctamente implementada. Lee el archivo especificado, gestiona errores de apertura y lectura, y muestra el contenido si se solicita. Cumple con todos los requerimientos.
+  2. Implementación de load_script() :
+     - Si bien funciona correctamente, esta implementación incluye código que debería estar en el archivo principal (main), rompiendo la modularidad del programa. En un diseño limpio, load_script() debería recibir directamente el nombre del archivo o solicitarlo desde main, y no manejar entradas directamente.
+
+
+- *Manejo de errores *:
+  1. Archivo no existente :
+     - Gestiona correctamente cuando el archivo no existe, mostrando un mensaje de error adecuado.
+  2. Error al abrir el archivo :
+     - Detecta y maneja fallos al abrir el archivo (e.g., permisos insuficientes).
+  3. Error durante la lectura del archivo :
+     - Usa ferror y excepciones para capturar errores de lectura y asegurar que se manejen correctamente.
+
+
+
+### *Justificación*
+
+   - La implementación de manejo de errores es adecuada y completa.
+   - Usa buenas prácticas como la limpieza de recursos (cerrar archivos) en bloques catch.
+
+2. *Inconsistencia con la separación de responsabilidades*:
+   - Según la pauta adicional, el archivo main debería contener únicamente el flujo principal (int main) y llamar a las funciones correspondientes. En este caso, la función load_script() incluye lógica de interacción con el usuario (cin y getline), que debería estar en main.
+   - Ejemplo de un diseño más modular:
+     cpp
+     void load_script_from_user_input() {
+         string filename;
+         cout << "Ingrese el nombre del archivo: ";
+         getline(cin, filename);
+         if (filename.empty()) {
+             cerr << "Error: No se ingresó un nombre de archivo." << endl;
+             return;
+         }
+         load_script(filename.c_str(), true);
+     }
+
+     int main() {
+         try {
+             load_script_from_user_input();
+         } catch (const exception &e) {
+             cerr << "Error inesperado: " << e.what() << endl;
+         }
+         return 0;
+     }
+     
+
+3. *Buen manejo de errores*:
+   - Usa excepciones estándar (std::runtime_error) para errores de lectura y asegura que los recursos sean liberados apropiadamente.
+   - Proporciona mensajes de error informativos para distintos escenarios.
+
+4. *Estilo y legibilidad*:
+   - El código es legible, usa nombres claros y sigue un estilo consistente.
+   - Usa adecuadamente estructuras y colores de consola para mejorar la funcionalidad.
+
+---
+
+### *Recomendaciones *
+1. *Separación de responsabilidades*:
+   - Desplaza la lógica de entrada del usuario fuera de load_script() hacia main o una función auxiliar.
+2. *Optimización del manejo de errores*:
+    podrías simplificar la estructura de excepciones con std::unique_ptr para gestionar automáticamente la liberación del archivo.
+3. *Comentarios*:
+   - Añade comentarios explicativos en las partes más críticas del código, como el manejo de excepciones o la lectura del archivo.
+
